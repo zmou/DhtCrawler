@@ -116,7 +116,7 @@ func (krpc *KRPC) Query(msg *KrpcMessage) {
 			if infohash, ok := query.A["info_hash"].(string); ok {
 				krpc.Dht.OutChan <- Id(infohash).String()
 
-				fmt.Printf("announce_peer info_hash:%s", Id(infohash).String())
+				fmt.Printf("announce_peer info_hash:%s\r\n", Id(infohash).String())
 			}
 		}
 	}
