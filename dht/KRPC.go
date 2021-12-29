@@ -100,11 +100,11 @@ func (krpc *KRPC) Query(msg *KrpcMessage) {
 
 		if query.Y == "get_peers" {
 
-			if infohash, ok := query.A["info_hash"].(string); ok {
+			if _, ok := query.A["info_hash"].(string); ok {
 
 				//krpc.Dht.OutChan <- dht.Id(infohash).String()
 
-				fmt.Printf("get_peers info_hash:%s", Id(infohash).String())
+				//fmt.Printf("get_peers info_hash:%s", Id(infohash).String())
 
 				nodes := ConvertByteStream(krpc.Dht.Table.Snodes)
 				data, _ := krpc.EncodingNodeResult(msg.T, "asdf13e", nodes)
