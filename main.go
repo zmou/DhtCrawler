@@ -1,15 +1,12 @@
 package main
 
 import (
-	"DhtCrawler"
+	"DhtCrawler/dht"
 	"fmt"
 	"os"
-	"runtime"
 )
 
 func main() {
-	runtime.GOMAXPROCS(2)
-
 	//主进程
 	master := make(chan string)
 
@@ -19,8 +16,8 @@ func main() {
 	//开启的dht节点
 	for i := 0; i < 2; i++ {
 		go func() {
-			id := DhtCrawler.GenerateID()
-			dhtNode := DhtCrawler.NewDhtNode(&id, os.Stdout, outHashIdChan, master)
+			id := dht.GenerateID()
+			dhtNode := dht.NewDhtNode(&id, os.Stdout, outHashIdChan, master)
 
 			dhtNode.Run()
 		}()

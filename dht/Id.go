@@ -1,4 +1,4 @@
-package DhtCrawler
+package dht
 
 import (
 	"crypto/sha1"
@@ -6,6 +6,7 @@ import (
 	"io"
 	"math/big"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -27,8 +28,14 @@ func (id Id) Neighbor() Id {
 func GenerateID() Id {
 	random := rand.New(rand.NewSource(time.Now().UnixNano()))
 	hash := sha1.New()
-	io.WriteString(hash, time.Now().String())
-	io.WriteString(hash, string(random.Int()))
+	_, err := io.WriteString(hash, time.Now().String())
+	if err != nil {
+		return nil
+	}
+	_, err = io.WriteString(hash, strconv.Itoa(random.Int()))
+	if err != nil {
+		return nil
+	}
 
 	return hash.Sum(nil)
 }

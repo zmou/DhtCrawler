@@ -1,4 +1,4 @@
-package DhtCrawler
+package dht
 
 import (
 	"net"
@@ -26,8 +26,8 @@ func (nw *Network) Init() {
 	}
 
 	laddr := nw.Conn.LocalAddr().(*net.UDPAddr)
-	nw.Dht.node.Ip = laddr.IP
-	nw.Dht.node.Port = laddr.Port
+	nw.Dht.Node.Ip = laddr.IP
+	nw.Dht.Node.Port = laddr.Port
 }
 
 func (nw *Network) Listening() {
@@ -38,7 +38,7 @@ func (nw *Network) Listening() {
 			continue
 		}
 
-		nw.Dht.krpc.Decode(string(buf), raddr)
+		_ = nw.Dht.Krpc.Decode(string(buf), raddr)
 	}
 }
 
@@ -46,7 +46,7 @@ func (nw *Network) Send(m []byte, addr *net.UDPAddr) error {
 	_, err := nw.Conn.WriteToUDP(m, addr)
 
 	if err != nil {
-		nw.Dht.log.Println(err)
+		nw.Dht.Log.Println(err)
 	}
 	return err
 }
