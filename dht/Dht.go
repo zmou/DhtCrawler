@@ -1,33 +1,32 @@
 package dht
 
 import (
-	"DhtCrawler/krpc"
 	"fmt"
 	"io"
 	"log"
 )
 
 type DhtNode struct {
-	Node    *krpc.KNode
-	Table   *krpc.KTable
+	Node    *KNode
+	Table   *KTable
 	Network *Network
 	Log     *log.Logger
 	Master  chan string
-	Krpc    *krpc.KRPC
+	Krpc    *KRPC
 	OutChan chan string
 }
 
 func NewDhtNode(id *Id, logger io.Writer, outHashIdChan chan string, master chan string) *DhtNode {
-	node := new(krpc.KNode)
+	node := new(KNode)
 	node.Id = *id
 
 	dht := new(DhtNode)
 	dht.OutChan = outHashIdChan
 	dht.Log = log.New(logger, "", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 	dht.Node = node
-	dht.Table = new(krpc.KTable)
+	dht.Table = new(KTable)
 	dht.Network = NewNetwork(dht)
-	dht.Krpc = krpc.NewKRPC(dht)
+	dht.Krpc = NewKRPC(dht)
 	dht.Master = master
 
 	return dht

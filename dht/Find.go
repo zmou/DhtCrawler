@@ -1,7 +1,6 @@
 package dht
 
 import (
-	"DhtCrawler/krpc"
 	"fmt"
 	"net"
 	"time"
@@ -14,7 +13,7 @@ var BOOTSTRAP = []string{
 	"212.129.33.50:6881",
 	"82.221.103.244:6881"}
 
-func (dhtNode *DhtNode) FindNode(node *krpc.KNode) {
+func (dhtNode *DhtNode) FindNode(node *KNode) {
 	var id Id
 	if node.Id != nil {
 		id = node.Id.Neighbor()
@@ -57,7 +56,7 @@ func (dhtNode *DhtNode) NodeFinder() {
 					dhtNode.Log.Fatalf("Resolve DNS error, %s\n", err)
 					return
 				}
-				node := new(krpc.KNode)
+				node := new(KNode)
 				node.Port = raddr.Port
 				node.Ip = raddr.IP
 				node.Id = nil

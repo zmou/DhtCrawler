@@ -1,7 +1,6 @@
-package krpc
+package dht
 
 import (
-	"DhtCrawler/dht"
 	"bytes"
 	"fmt"
 	"math"
@@ -14,12 +13,12 @@ import (
 type action func(arg map[string]interface{}, raddr *net.UDPAddr)
 
 type KRPC struct {
-	Dht   *dht.DhtNode
+	Dht   *DhtNode
 	Types map[string]action
 	tid   uint32
 }
 
-func NewKRPC(dhtNode *dht.DhtNode) *KRPC {
+func NewKRPC(dhtNode *DhtNode) *KRPC {
 	krpc := new(KRPC)
 	krpc.Dht = dhtNode
 
@@ -105,7 +104,7 @@ func (krpc *KRPC) Query(msg *KrpcMessage) {
 
 				//krpc.Dht.OutChan <- dht.Id(infohash).String()
 
-				fmt.Printf("get_peers info_hash:%s", dht.Id(infohash).String())
+				fmt.Printf("get_peers info_hash:%s", Id(infohash).String())
 
 				nodes := ConvertByteStream(krpc.Dht.Table.Snodes)
 				data, _ := krpc.EncodingNodeResult(msg.T, "asdf13e", nodes)
@@ -115,9 +114,9 @@ func (krpc *KRPC) Query(msg *KrpcMessage) {
 
 		if query.Y == "announce_peer" {
 			if infohash, ok := query.A["info_hash"].(string); ok {
-				krpc.Dht.OutChan <- dht.Id(infohash).String()
+				krpc.Dht.OutChan <- Id(infohash).String()
 
-				fmt.Printf("announce_peer info_hash:%s", dht.Id(infohash).String())
+				fmt.Printf("announce_peer info_hash:%s", Id(infohash).String())
 			}
 		}
 	}

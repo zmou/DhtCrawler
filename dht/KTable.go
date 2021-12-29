@@ -1,7 +1,6 @@
-package krpc
+package dht
 
 import (
-	"DhtCrawler/dht"
 	"net"
 )
 
@@ -19,7 +18,7 @@ func (table *KTable) Put(node *KNode) {
 }
 
 type KNode struct {
-	Id   dht.Id
+	Id   Id
 	Ip   net.IP
 	Port int
 }
