@@ -13,10 +13,10 @@ func main() {
 	master := make(chan string)
 
 	//爬虫输出抓取到的hashIds通道
-	outHashIdChan := make(chan string)
+	outHashIdChan := make(chan string, 100)
 
 	//开启的dht节点
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 10; i++ {
 		go func() {
 			id := dht.GenerateID()
 			dhtNode := dht.NewDhtNode(&id, os.Stdout, outHashIdChan, master)
