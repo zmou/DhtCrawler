@@ -16,7 +16,7 @@ func main() {
 	outHashIdChan := make(chan string, 100)
 
 	//开启的dht节点
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 2; i++ {
 		go func() {
 			id := dht.GenerateID()
 			dhtNode := dht.NewDhtNode(&id, os.Stdout, outHashIdChan, master)
