@@ -9,9 +9,10 @@ import (
 )
 
 var BOOTSTRAP = []string{
-	"67.215.246.10:6881",
-	"212.129.33.50:6881",
-	"82.221.103.244:6881"}
+	"router.utorrent.com:6881",
+	"router.bittorrent.com:6881",
+	"dht.transmissionbt.com:6881",
+}
 
 func (dhtNode *DhtNode) FindNode(node *KNode) {
 	var id Id
