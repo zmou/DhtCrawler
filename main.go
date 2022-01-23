@@ -8,12 +8,19 @@ import (
 	"time"
 )
 
+var (
+	stopChan = make(chan struct{}, 1)
+	//爬虫输出抓取到的hashIds通道
+	outHashIdChan = make(chan string, 100)
+)
+
 func main() {
+	defer func() {
+		<-stopChan
+	}()
+
 	//主进程
 	master := make(chan string)
-
-	//爬虫输出抓取到的hashIds通道
-	outHashIdChan := make(chan string, 100)
 
 	//开启的dht节点
 	for i := 0; i < 2; i++ {
@@ -25,19 +32,26 @@ func main() {
 		}()
 	}
 
-	for {
-		select {
-		//输出爬虫抓取的HashId结果
-		case hashId := <-outHashIdChan:
-			fmt.Println(hashId)
+	go func() {
+		for {
+			infoHash, ok := <-outHashIdChan
+			if !ok {
+				break
+			}
+
+			fmt.Println(infoHash)
 
 			// 写入文件
-			writeToFile(hashId)
+			writeToFile(infoHash)
+		}
+	}()
 
-		case msg := <-master:
+	go func() {
+		for {
+			msg := <-master
 			fmt.Println(msg)
 		}
-	}
+	}()
 }
 
 func writeToFile(hashId string) {
