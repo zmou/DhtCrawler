@@ -141,7 +141,8 @@ func convertIPPort(buf *bytes.Buffer, ip net.IP, port int) {
 }
 
 func ParseBytesStream(data []byte) []*KNode {
-	var nodes []*KNode = nil
+	var nodes []*KNode
+
 	for j := 0; j < len(data); j = j + 26 {
 		if j+26 > len(data) {
 			break
@@ -155,6 +156,7 @@ func ParseBytesStream(data []byte) []*KNode {
 		node.Port = int(port[0])<<8 + int(port[1])
 		nodes = append(nodes, node)
 	}
+
 	return nodes
 }
 
