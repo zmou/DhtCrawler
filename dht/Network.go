@@ -5,18 +5,20 @@ import (
 )
 
 type Network struct {
-	Dht  *DhtNode
 	Conn *net.UDPConn
 }
 
 func NewNetwork(dhtNode *DhtNode) *Network {
 	nw := new(Network)
-	nw.Dht = dhtNode
-	nw.Init()
+
+	nw.Init(dhtNode)
+
 	return nw
 }
-func (nw *Network) Init() {
+
+func (nw *Network) Init(dhtNode *DhtNode) {
 	addr := new(net.UDPAddr)
+	addr.Port = dhtNode.Port
 
 	var err error
 	nw.Conn, err = net.ListenUDP("udp", addr)
@@ -26,27 +28,28 @@ func (nw *Network) Init() {
 	}
 
 	laddr := nw.Conn.LocalAddr().(*net.UDPAddr)
-	nw.Dht.Node.Ip = laddr.IP
-	nw.Dht.Node.Port = laddr.Port
+	dhtNode.Node.Ip = laddr.IP
+	dhtNode.Node.Port = laddr.Port
 }
 
-func (nw *Network) Listening() {
+func (dhtNode *DhtNode) Listening() {
 	buf := make([]byte, 1000)
 	for {
-		_, raddr, err := nw.Conn.ReadFromUDP(buf)
+		_, raddr, err := dhtNode.Network.Conn.ReadFromUDP(buf)
 		if err != nil {
 			continue
 		}
 
-		_ = nw.Dht.Krpc.Decode(string(buf), raddr)
+		_ = dhtNode.Decode(string(buf), raddr)
 	}
 }
 
-func (nw *Network) Send(m []byte, addr *net.UDPAddr) error {
-	_, err := nw.Conn.WriteToUDP(m, addr)
+func (dhtNode *DhtNode) Send(m []byte, addr *net.UDPAddr) error {
+	_, err := dhtNode.Network.Conn.WriteToUDP(m, addr)
 
 	if err != nil {
-		nw.Dht.Log.Println(err)
+		dhtNode.Log.Println(err)
 	}
+
 	return err
 }

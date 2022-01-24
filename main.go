@@ -12,6 +12,24 @@ var (
 	stopChan = make(chan struct{}, 1)
 	//爬虫输出抓取到的hashIds通道
 	outHashIdChan = make(chan string, 100)
+
+	dhtNodePorts = []int{
+		38663,
+		38723,
+		38726,
+		33968,
+		55721,
+		51886,
+		56932,
+		56324,
+		52413,
+		53938,
+		57739,
+		36949,
+		37495,
+		34605,
+		48005,
+	}
 )
 
 func main() {
@@ -24,12 +42,12 @@ func main() {
 
 	//开启的dht节点
 	for i := 0; i < 2; i++ {
-		go func() {
+		go func(i int) {
 			id := dht.GenerateID()
-			dhtNode := dht.NewDhtNode(&id, os.Stdout, outHashIdChan, master)
+			dhtNode := dht.NewDhtNode(&id, os.Stdout, outHashIdChan, master, dhtNodePorts[i])
 
 			dhtNode.Run()
-		}()
+		}(i)
 	}
 
 	go func() {

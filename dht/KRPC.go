@@ -33,7 +33,7 @@ func (krpc *KRPC) autoID() uint32 {
 	return atomic.AddUint32(&krpc.tid, 1)
 }
 
-func (krpc *KRPC) Decode(data string, raddr *net.UDPAddr) error {
+func (dhtNode *DhtNode) Decode(data string, raddr *net.UDPAddr) error {
 	val := make(map[string]interface{})
 
 	if err := bencode.DecodeString(data, &val); err != nil {
@@ -73,10 +73,10 @@ func (krpc *KRPC) Decode(data string, raddr *net.UDPAddr) error {
 
 		switch message.Y {
 		case "q":
-			krpc.Query(message)
+			dhtNode.Query(message)
 			break
 		case "r":
-			krpc.Response(message)
+			dhtNode.Response(message)
 			break
 		}
 
@@ -84,18 +84,18 @@ func (krpc *KRPC) Decode(data string, raddr *net.UDPAddr) error {
 	return nil
 }
 
-func (krpc *KRPC) Response(msg *KrpcMessage) {
+func (dhtNode *DhtNode) Response(msg *KrpcMessage) {
 	if response, ok := msg.Addion.(*Response); ok {
 		if nodestr, ok := response.R["nodes"].(string); ok {
 			nodes := ParseBytesStream([]byte(nodestr))
 			for _, node := range nodes {
-				krpc.Dht.Table.Put(node)
+				dhtNode.Table.Put(node)
 			}
 		}
 	}
 }
 
-func (krpc *KRPC) Query(msg *KrpcMessage) {
+func (dhtNode *DhtNode) Query(msg *KrpcMessage) {
 	if query, ok := msg.Addion.(*Query); ok {
 
 		if query.Y == "get_peers" {
@@ -106,15 +106,15 @@ func (krpc *KRPC) Query(msg *KrpcMessage) {
 
 				//fmt.Printf("get_peers info_hash:%s", Id(infohash).String())
 
-				nodes := ConvertByteStream(krpc.Dht.Table.Snodes)
-				data, _ := krpc.EncodingNodeResult(msg.T, "asdf13e", nodes)
-				_ = krpc.Dht.Network.Send([]byte(data), msg.Addr)
+				nodes := ConvertByteStream(dhtNode.Table.Snodes)
+				data, _ := dhtNode.Krpc.EncodingNodeResult(msg.T, "asdf13e", nodes)
+				_ = dhtNode.Send([]byte(data), msg.Addr)
 			}
 		}
 
 		if query.Y == "announce_peer" {
 			if infohash, ok := query.A["info_hash"].(string); ok {
-				krpc.Dht.OutChan <- Id(infohash).String()
+				dhtNode.OutChan <- Id(infohash).String()
 
 				fmt.Printf("announce_peer info_hash:%s\r\n", Id(infohash).String())
 			}

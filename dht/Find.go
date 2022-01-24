@@ -39,7 +39,7 @@ func (dhtNode *DhtNode) FindNode(node *KNode) {
 	raddr.IP = node.Ip
 	raddr.Port = node.Port
 
-	err = dhtNode.Network.Send([]byte(data), raddr)
+	err = dhtNode.Send([]byte(data), raddr)
 	if err != nil {
 		dhtNode.Log.Println(err)
 	}
